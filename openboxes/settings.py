@@ -25,7 +25,7 @@ SECRET_KEY = 'qm+c%etwu8=$wts7e2g3a*26f3p+^94a6x3)_^pz=s#pbbt5i4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['jmiranda.pythonanywhere.com']
+ALLOWED_HOSTS = ['localhost','jmiranda.pythonanywhere.com','dev.smartpager.net']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'core',
 ]
 
