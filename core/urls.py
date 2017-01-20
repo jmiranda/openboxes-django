@@ -1,8 +1,10 @@
+#!python
+# log/urls.py
 from django.conf.urls import url
-
 from . import views
 
+# We are adding a URL called /home
 urlpatterns = [
-    #url(r'^$', views.index, name='index'),
-    url(r'^$', views.product_list, name='product_list'),
+    url(r'^$', views.home, name='home'),
+    url(r'^products/$', views.product_list, name='product_list'),
 ]

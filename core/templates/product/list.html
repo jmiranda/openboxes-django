@@ -1,9 +1,40 @@
-<html>
-<head>
-    <title>Product List</title>
-</head>
-<body>
-Hello World
-</body>
+{% extends 'base.html' %}
 
-</html>
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="jumbotron">
+            <h1>Products</h1>
+            <p>You are on your Dashboard</p>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <table class="table table-bordered table-responsive">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>
+                    {{ product.name }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        <tfoot>
+            <tr>
+                <td>Displaying {{ products|length }} products</td>
+            </tr>
+        </tfoot>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}
