@@ -41,7 +41,9 @@
                             <div class="form-group col-lg-12">
                                 <input class="btn btn-success btn-sm" type="submit" value="Login" />
 
-                                <a href="{% url 'password_reset' %}">reset password</a>
+                                <div class="pull-right">
+                                    <a href="{% url 'password_reset' %}">reset password</a>
+                                </div>
                             </div>
                             <input type="hidden" name="next" value="{{ next }}" />
                         </form>
