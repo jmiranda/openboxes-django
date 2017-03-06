@@ -42,13 +42,13 @@
         </div>
     </div>
     <div class="row">
-        <a href="{% url 'product_edit' product.id %}" class="btn btn-primary">
+        <a href="{% url 'product-update-view' product.id %}" class="btn btn-default">
             Edit
         </a>
-        <a href="{% url 'product_delete' product.id %}" class="btn btn-danger">
+        <a href="{% url 'product-delete-view' product.id %}" class="btn btn-danger">
             Delete
         </a>
-        <a href="{% url 'product_list' %}" class="btn btn-default">
+        <a href="{% url 'product-list-view' %}" class="btn btn-default">
             Cancel
         </a>
     </div>

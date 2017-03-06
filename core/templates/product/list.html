@@ -25,6 +25,11 @@
         <table class="table table-bordered table-responsive">
             <thead>
                 <tr>
+                    <td colspan="4">
+                        Displaying {{ object_list|length }} products
+                    </td>
+                </tr>
+                <tr>
                     <th>Name</th>
                     <th>Category</th>
                     <th>Manufacturer</th>
@@ -32,10 +37,10 @@
                 </tr>
             </thead>
             <tbody>
-            {% for product in products %}
+            {% for product in object_list %}
                 <tr>
                     <td>
-                        <a href="{% url 'product_details' product.id %}">
+                        <a href="{% url 'product-details-view' product.id %}">
                             {{ product.name }}
                         </a>
                     </td>
@@ -47,13 +52,13 @@
                     </td>
                     <td>
                         <div class="text-center">
-                            <a href="{% url 'product_details' product.id %}" class="btn btn-default">
+                            <a href="{% url 'product-details-view' product.id %}" class="btn btn-default">
                                 Show
                             </a>
-                            <a href="{% url 'product_edit' product.id %}" class="btn btn-primary">
+                            <a href="{% url 'product-update-view' product.id %}" class="btn btn-default">
                                 Edit
                             </a>
-                            <a href="{% url 'product_delete' product.id %}" class="btn btn-danger">
+                            <a href="{% url 'product-delete-view' product.id %}" class="btn btn-danger">
                                 Delete
                             </a>
                         </div>
@@ -63,7 +68,26 @@
             </tbody>
         <tfoot>
             <tr>
-                <td colspan="4">Displaying {{ products|length }} products</td>
+                <td colspan="4">
+
+                    {% if is_paginated %}
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                                <li>
+                                    <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
+                                </li>
+                            {% endif %}
+                                <li class="">
+                                    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                                </li>
+                            {% if page_obj.has_next %}
+                                <li>
+                                    <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    {% endif %}
+                </td>
             </tr>
         </tfoot>
         </table>

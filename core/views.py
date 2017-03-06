@@ -1,11 +1,16 @@
-from time import timezone
+import operator
+import functools
+import logging
 
+from time import timezone
 from core.forms import ProductForm
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView, DeleteView, CreateView, UpdateView
+from django.views.generic.list import ListView
+from django.db.models import Q
 
 from .models import Product
 
@@ -18,9 +23,41 @@ from .models import Product
 def home(request):
     return render(request,"home.html")
 
-def product_list(request):
-    products = Product.objects.all()
-    return render(request, 'product/list.html', {'products':products})
+class ProductListView(ListView):
+    paginate_by = 3
+    #products = Product.objects.all()
+    template_name = "product/list.html"
+    def get_queryset(self):
+        return Product.objects.all()
+
+    #return render(request, 'product/list.html', {'products':products})
+
+class ProductSearchListView(ProductListView):
+    """
+    Display a product list page filtered by the search query.
+    """
+    paginate_by = 3
+    model = Product
+    template_name = "product/list.html"
+
+    def get_queryset(self):
+        result = super(ProductListView, self).get_queryset()
+        query = self.request.GET.get('q')
+
+        if query:
+            query_list = query.split()
+            result = result.filter(
+                reduce(operator.and_,
+                       (Q(name__icontains=q) for q in query_list))|
+                reduce(operator.and_,
+                       (Q(manufacturer__name__icontains=q) for q in query_list))|
+                reduce(operator.and_,
+                       (Q(category__name__icontains=q) for q in query_list))|
+                reduce(operator.and_,
+                       (Q(description__icontains=q) for q in query_list))
+            )
+
+        return result
 
 
 def product_details(request, product_id):
@@ -28,13 +65,13 @@ def product_details(request, product_id):
     return render (request, 'product/show.html', {'product':product})
 
 
-class product_create(CreateView):
+class ProductCreateView(CreateView):
     model = Product
     template_name = "product/create.html"
     success_url = "/products"
     fields = ['code', 'name', 'description', 'created_by', 'manufacturer']
 
-class product_edit(UpdateView):
+class ProductUpdateView(UpdateView):
     template_name = 'product/edit.html'
     form_class = ProductForm
     model = Product
@@ -46,14 +83,14 @@ class product_edit(UpdateView):
     def save(self, *args, **kwargs):
         print self.instance
         # returns <Profile: Billy Bob's Profile> instead of <User: Billy Bob> !!!
-        return super(product_edit, self).save(*args, **kwargs)
+        return super(ProductUpdateView, self).save(*args, **kwargs)
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
-        return super(product_edit, self).form_valid(form)
+        return super(ProductUpdateView, self).form_valid(form)
 
-class product_delete(DeleteView):
+class ProductDeleteView(DeleteView):
     template_name = 'product/delete.html'
     model = Product
     pk_url_kwarg = 'product_id'

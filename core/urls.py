@@ -1,5 +1,6 @@
 #!python
 # log/urls.py
+from core.views import ProductSearchListView, ProductListView, ProductUpdateView, ProductDeleteView, ProductCreateView
 from django.conf.urls import url
 from django.views.generic import TemplateView
 
@@ -8,10 +9,10 @@ from . import views
 # We are adding a URL called /home
 urlpatterns = [
     url(r'^$', views.home, name='index'),
-    url(r'^products/$', views.product_list, name='product_list'),
-    url(r'^products/create/$', views.product_create.as_view(), name='product_create'),
-    url(r'^products/(?P<product_id>[0-9]+)/$', views.product_details, name='product_details'),
-    url(r'^products/(?P<product_id>[0-9]+)/edit/$', views.product_edit.as_view(), name='product_edit'),
-    url(r'^products/(?P<product_id>[0-9]+)/delete/$', views.product_delete.as_view(), name='product_delete'),
-
+    url(r'^products/$', ProductListView.as_view(), name='product-list-view'),
+    url(r'^products/create/$', ProductCreateView.as_view(), name='product-create-view'),
+    url(r'^products/(?P<product_id>[0-9]+)/$', views.product_details, name='product-details-view'),
+    url(r'^products/(?P<product_id>[0-9]+)/edit/$', ProductUpdateView.as_view(), name='product-update-view'),
+    url(r'^products/(?P<product_id>[0-9]+)/delete/$', ProductDeleteView.as_view(), name='product-delete-view'),
+    url(r'^products/search/$', ProductSearchListView.as_view(), name='product-search-list-view'),
 ]
