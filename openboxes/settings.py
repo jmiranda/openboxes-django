@@ -24,7 +24,7 @@ SECRET_KEY = 'qm+c%etwu8=$wts7e2g3a*26f3p+^94a6x3)_^pz=s#pbbt5i4'
 
 # Add static folder to STATIC_DIRS
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "core/static"),
 ]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

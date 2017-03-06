@@ -4,32 +4,66 @@
 
 <div class="container">
     <div class="row">
-        <div class="jumbotron">
-            <h1>Products</h1>
-            <p>You are on your Dashboard</p>
+        <h1>Products</h1>
+        <p class="lead">Your products</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="panel pull-right">
+            <a href="create" class="btn btn-primary">
+                Create
+            </a>
         </div>
     </div>
 </div>
+
+
 <div class="container">
     <div class="row">
         <table class="table table-bordered table-responsive">
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>Category</th>
+                    <th>Manufacturer</th>
+                    <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
             {% for product in products %}
                 <tr>
                     <td>
-                    {{ product.name }}
+                        <a href="{% url 'product_details' product.id %}">
+                            {{ product.name }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ product.category.name }}
+                    </td>
+                    <td>
+                        {{ product.manufacturer.name }}
+                    </td>
+                    <td>
+                        <div class="text-center">
+                            <a href="{% url 'product_details' product.id %}" class="btn btn-default">
+                                Show
+                            </a>
+                            <a href="{% url 'product_edit' product.id %}" class="btn btn-primary">
+                                Edit
+                            </a>
+                            <a href="{% url 'product_delete' product.id %}" class="btn btn-danger">
+                                Delete
+                            </a>
+                        </div>
                     </td>
                 </tr>
             {% endfor %}
             </tbody>
         <tfoot>
             <tr>
-                <td>Displaying {{ products|length }} products</td>
+                <td colspan="4">Displaying {{ products|length }} products</td>
             </tr>
         </tfoot>
         </table>

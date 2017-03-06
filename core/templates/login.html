@@ -18,39 +18,45 @@
     {% endif %}
 {% endif %}
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 col-md-offset-2">
-            <div class="login-panel panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Please Sign In</h3>
-                </div>
-                <div class="panel-body">
+    <div class="vertical-center">
 
-                    <div class="bs-component">
-                        <form method="post" action="{% url 'login' %}" class="form">
-                        {% csrf_token %}
-                            <div class="form-group col-lg-12">
-                                <label for="username" class="control-label">{{ form.username.label_tag }}</label>
-                                {{ form.username }}
-                            </div>
-                            <div class="form-group col-lg-12">
-                                <label for="username" class="control-label">{{ form.password.label_tag }}</label>
-                                {{ form.password }}
-                            </div>
-                            <div class="form-group col-lg-12">
-                                <input class="btn btn-success btn-sm" type="submit" value="Login" />
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-2">
+                    <div class="login-panel panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Please Sign In</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="bs-component">
+                                <form method="post" action="{% url 'login' %}" class="form">
+                                {% csrf_token %}
+                                    <div class="form-group col-lg-12">
+                                        <label for="username" class="control-label">{{ form.username.label_tag }}</label>
+                                        {{ form.username }}
+                                    </div>
+                                    <div class="form-group col-lg-12">
+                                        <label for="username" class="control-label">{{ form.password.label_tag }}</label>
+                                        {{ form.password }}
+                                    </div>
+                                    <div class="form-group col-lg-12">
+                                        <input class="btn btn-success btn-sm" type="submit" value="Login" />
 
-                                <a href="{% url 'password_reset' %}">reset password</a>
+                                        <div class="pull-right">
+                                            <a href="{% url 'password_reset' %}">reset password</a>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="next" value="{{ next }}" />
+                                </form>
                             </div>
-                            <input type="hidden" name="next" value="{{ next }}" />
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
-</div>
+
 
 {% endblock %}
 
