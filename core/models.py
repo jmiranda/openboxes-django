@@ -49,6 +49,9 @@ class AbstractProduct(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey('auth.User')
 
+    thumbnail_url = models.TextField(default='https://chipinworld.com/images/product/default_product.png')
+    photo_url = models.TextField(default='https://chipinworld.com/images/product/default_product.png')
+
     # Associations
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.SET_NULL, null=True, related_name='products')

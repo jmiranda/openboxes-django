@@ -4,6 +4,7 @@ import logging
 
 from time import timezone
 from core.forms import ProductForm
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -13,6 +14,8 @@ from django.views.generic.list import ListView
 from django.db.models import Q
 
 from .models import Product
+
+log = logging.getLogger(__name__)
 
 #def index(request):
 #    return HttpResponse("Hello, world. You're at the core index.")
@@ -24,7 +27,7 @@ def home(request):
     return render(request,"home.html")
 
 class ProductListView(ListView):
-    paginate_by = 3
+    paginate_by = 9
     #products = Product.objects.all()
     template_name = "product/list.html"
     def get_queryset(self):
@@ -36,7 +39,7 @@ class ProductSearchListView(ProductListView):
     """
     Display a product list page filtered by the search query.
     """
-    paginate_by = 3
+    paginate_by = 9
     model = Product
     template_name = "product/list.html"
 
@@ -46,16 +49,36 @@ class ProductSearchListView(ProductListView):
 
         if query:
             query_list = query.split()
-            result = result.filter(
-                reduce(operator.and_,
-                       (Q(name__icontains=q) for q in query_list))|
-                reduce(operator.and_,
-                       (Q(manufacturer__name__icontains=q) for q in query_list))|
-                reduce(operator.and_,
-                       (Q(category__name__icontains=q) for q in query_list))|
-                reduce(operator.and_,
-                       (Q(description__icontains=q) for q in query_list))
-            )
+
+            log.error("query list: %s " % query_list)
+
+            # 1. Complex search filters
+            # result = result.filter(
+            #     reduce(operator.and_,
+            #            (Q(name__icontains=q) for q in query_list))|
+            #     reduce(operator.and_,
+            #            (Q(manufacturer__name__icontains=q) for q in query_list))|
+            #     reduce(operator.and_,
+            #            (Q(category__name__icontains=q) for q in query_list))|
+            #     reduce(operator.and_,
+            #            (Q(description__icontains=q) for q in query_list))
+            # )
+
+            # 2. Simple fulltext search of description field
+            #result = Product.objects.filter(description__search=query)
+
+            # 3. Advanced fulltext search over multiple fields
+            #result = Product.objects.annotate(search = SearchVector('name', 'description', 'manufacturer__name',)).filter(search=query)
+
+            # 4. Advanced fulltext search with weights, order results by rank in descending order
+            vector = SearchVector('name', weight='A') + SearchVector('manufacturer__name', weight='B') + SearchVector('description', weight='C')
+            query = SearchQuery(query)
+            rank = SearchRank(vector, query)
+            result = Product.objects.annotate(rank=rank).filter(rank__gte=0.1).order_by('-rank')
+
+            # 5. Assign custom weights to D, C, B, A ranking
+            #rank = SearchRank(vector, query, weights=[0.2, 0.4, 0.6, 0.8])
+            #Product.objects.annotate(rank=rank).filter(rank__gte=0.3).order_by('-rank')
 
         return result
 
