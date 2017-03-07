@@ -48,6 +48,7 @@
                             <input type="text" name="q" class="form-control" placeholder="Search" value="{{ request.GET.q }}">
                         </div>
                         <button type="submit" class="btn btn-default">Submit</button>
+                        <a href="{% url 'product-list-view' %}" class="btn btn-default">Clear</a>
                     </form>
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown">
