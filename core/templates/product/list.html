@@ -4,54 +4,30 @@
 
 <div class="container">
     <div class="row">
-        <h1>Products</h1>
-        <p class="lead">Your products</p>
-    </div>
-</div>
-
-<div class="container">
-    <div class="row">
-        <div class="panel pull-right">
-            <a href="create" class="btn btn-primary">
-                Create
-            </a>
+        <div class="pull-right">
+            <a href="{% url 'product-list-view' %}" class="btn btn-default">Show All</a>
+            <a href="create" class="btn btn-primary">Create a New Product</a>
         </div>
+
+        <h1>Products <small>Displaying {{ object_list|length }} products</small></h1>
     </div>
 </div>
 
-
 <div class="container">
     <div class="row">
-        <table class="table table-bordered table-responsive">
-            <thead>
-                <tr>
-                    <td colspan="4">
-                        Displaying {{ object_list|length }} products
-                    </td>
-                </tr>
-                <tr>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Manufacturer</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for product in object_list %}
-                <tr>
-                    <td>
-                        <a href="{% url 'product-details-view' product.id %}">
-                            {{ product.name }}
-                        </a>
-                    </td>
-                    <td>
-                        {{ product.category.name }}
-                    </td>
-                    <td>
-                        {{ product.manufacturer.name }}
-                    </td>
-                    <td>
-                        <div class="text-center">
+        {% for product in object_list %}
+            <div class="col-sm-4 col-md-3">
+                <div class="thumbnail">
+                    <a href="{% url 'product-details-view' product.id %}">
+                        <img src="{{ product.thumbnail_url }}" alt="{{ product.name }}" class="img-responsive img-thumbnail"/>
+                    </a>
+                    <div class="caption">
+                        <h3><a href="{% url 'product-details-view' product.id %}">{{ product.name }}</a></h3>
+                        <p>{{ product.description|truncatewords:20 }}</p>
+                        <p><label>Category:</label> {{ product.category.name }}</p>
+                        <p><label>Manufacturer:</label> {{ product.manufacturer.name }}</p>
+                        <p><label>Ranking:</label> {{ product.rank }}</p>
+                        <p>
                             <a href="{% url 'product-details-view' product.id %}" class="btn btn-default">
                                 Show
                             </a>
@@ -61,38 +37,43 @@
                             <a href="{% url 'product-delete-view' product.id %}" class="btn btn-danger">
                                 Delete
                             </a>
-                        </div>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="4">
 
-                    {% if is_paginated %}
-                        <ul class="pagination">
-                            {% if page_obj.has_previous %}
-                                <li>
-                                    <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
-                                </li>
-                            {% endif %}
-                                <li class="">
-                                    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-                                </li>
-                            {% if page_obj.has_next %}
-                                <li>
-                                    <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    {% endif %}
-                </td>
-            </tr>
-        </tfoot>
-        </table>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% if forloop.counter|divisibleby:4 %}
+                </div>
+                <div class="row">
+            {% endif %}
+
+
+        {% endfor %}
+    </div>
+    <div class="row">
+        {% if is_paginated %}
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li>
+                        <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
+                    </li>
+                {% endif %}
+                    <li class="">
+                        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+                {% if page_obj.has_next %}
+                    <li>
+                        <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
+                    </li>
+                {% endif %}
+            </ul>
+        {% endif %}
+
     </div>
 </div>
+
+
+
 
 
 {% endblock %}
