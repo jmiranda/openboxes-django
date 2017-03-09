@@ -2,18 +2,25 @@
 
 {% block content %}
 
-<div class="container">
-    <div class="row">
+<div class="container-fluid">
+    <div class="row-fluid">
         <div class="pull-right">
             <a href="{% url 'product-list-view' %}" class="btn btn-default">Show All</a>
             <a href="create" class="btn btn-primary">Create a New Product</a>
         </div>
 
-        <h1>Products <small>Displaying {{ object_list|length }} products</small></h1>
+        <h1>Products <small>Showing {{ page_obj.object_list|length }} of {{ page_obj.paginator.count }} products on Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</small></h1>
+        <div>
+
+        </div>
     </div>
 </div>
 
-<div class="container">
+<div class="container-fluid">
+    <div class="row">
+        {% include "product/pagination.html" %}
+    </div>
+
     <div class="row">
         {% for product in object_list %}
             <div class="col-sm-4 col-md-3">
@@ -24,6 +31,7 @@
                     <div class="caption">
                         <h3><a href="{% url 'product-details-view' product.id %}">{{ product.name }}</a></h3>
                         <p>{{ product.description|truncatewords:20 }}</p>
+                        <p><label>Code:</label> {{ product.code }}</p>
                         <p><label>Category:</label> {{ product.category.name }}</p>
                         <p><label>Manufacturer:</label> {{ product.manufacturer.name }}</p>
                         <p><label>Ranking:</label> {{ product.rank }}</p>
@@ -46,29 +54,10 @@
                 </div>
                 <div class="row">
             {% endif %}
-
-
         {% endfor %}
     </div>
     <div class="row">
-        {% if is_paginated %}
-            <ul class="pagination">
-                {% if page_obj.has_previous %}
-                    <li>
-                        <span><a href="?page={{ page_obj.previous_page_number }}">Previous</a></span>
-                    </li>
-                {% endif %}
-                    <li class="">
-                        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-                    </li>
-                {% if page_obj.has_next %}
-                    <li>
-                        <span><a href="?page={{ page_obj.next_page_number }}">Next</a></span>
-                    </li>
-                {% endif %}
-            </ul>
-        {% endif %}
-
+        {% include "product/pagination.html" %}
     </div>
 </div>
 
