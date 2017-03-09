@@ -1,10 +1,13 @@
 import operator
 import functools
 import logging
+import csv
 
 from time import timezone
-from core.forms import ProductForm
+from core.forms import ProductForm, UploadFileForm
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -26,8 +29,9 @@ log = logging.getLogger(__name__)
 def home(request):
     return render(request,"home.html")
 
+
 class ProductListView(ListView):
-    paginate_by = 9
+    paginate_by = 48
     #products = Product.objects.all()
     template_name = "product/list.html"
     def get_queryset(self):
@@ -35,11 +39,12 @@ class ProductListView(ListView):
 
     #return render(request, 'product/list.html', {'products':products})
 
+
 class ProductSearchListView(ProductListView):
     """
     Display a product list page filtered by the search query.
     """
-    paginate_by = 9
+    paginate_by = 48
     model = Product
     template_name = "product/list.html"
 
@@ -71,10 +76,24 @@ class ProductSearchListView(ProductListView):
             #result = Product.objects.annotate(search = SearchVector('name', 'description', 'manufacturer__name',)).filter(search=query)
 
             # 4. Advanced fulltext search with weights, order results by rank in descending order
-            vector = SearchVector('name', weight='A') + SearchVector('manufacturer__name', weight='B') + SearchVector('description', weight='C')
+            vector = SearchVector('name', weight='A') + SearchVector('category__name', weight='A') + SearchVector('manufacturer__name', weight='B') + SearchVector('description', weight='C')
             query = SearchQuery(query)
             rank = SearchRank(vector, query)
-            result = Product.objects.annotate(rank=rank).filter(rank__gte=0.1).order_by('-rank')
+            result = Product.objects.annotate(rank=rank).filter(rank__gte=0.01).order_by('-rank')
+
+            # q = 'hello world'
+            # queryset = Product.objects.extra(
+            #     select={
+            #         'snippet': "ts_headline(body, query)",
+            #         'rank': "ts_rank_cd(body_tsv, query, 32)",
+            #     },
+            #     tables=["plainto_tsquery(%s) as query"],
+            #     where=["body_tsv @@ query"],
+            #     params=[q]
+            # ).order_by('-rank')
+            #
+            # for entry in queryset:
+            #     print entry.title, entry.snippet, entry.rank
 
             # 5. Assign custom weights to D, C, B, A ranking
             #rank = SearchRank(vector, query, weights=[0.2, 0.4, 0.6, 0.8])
@@ -93,6 +112,7 @@ class ProductCreateView(CreateView):
     template_name = "product/create.html"
     success_url = "/products"
     fields = ['code', 'name', 'description', 'created_by', 'manufacturer']
+
 
 class ProductUpdateView(UpdateView):
     template_name = 'product/edit.html'
@@ -113,9 +133,51 @@ class ProductUpdateView(UpdateView):
         # It should return an HttpResponse.
         return super(ProductUpdateView, self).form_valid(form)
 
+
 class ProductDeleteView(DeleteView):
     template_name = 'product/delete.html'
     model = Product
     pk_url_kwarg = 'product_id'
-    success_url = reverse_lazy('product_list')
+    success_url = reverse_lazy('product-list-view')
+
+
+# def upload(request):
+#     log.info("upload file %s", request)
+#
+#     if request.method == 'POST' and request.FILES['myfile']:
+#         file = request.FILES['myfile']
+#         fs = FileSystemStorage()
+#         filename = fs.save(file.name, file)
+#         uploaded_file_url = fs.url(filename)
+#         return render(request, 'product/upload.html', {
+#             'uploaded_file_url': uploaded_file_url
+#         })
+#     return render(request, 'product/upload.html')
+
+
+
+def upload(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            log.info("form %s", form)
+
+            form.save()
+            #file = form.cleaned_data['myfile']
+
+            #handle_uploaded_file(file)
+
+            #return HttpResponseRedirect('/products/')
+    else:
+        form = UploadFileForm()
+
+    return render(request, 'product/upload.html', {'form': form})
+
+
+def handle_uploaded_file(file):
+    pass
+    # reader = csv.reader(file)
+    # for row in reader:
+    #     print row
+    #
 

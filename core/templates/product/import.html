@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <h1>Create</h1>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Create
+            </div>
+            <div class="panel-body">
+
+                <form action="" method="post" class="form">{% csrf_token %}
+
+                    <div class="form-group">
+                        <label class="">File</label>
+                        <input type="file" name="file"/>
+
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary"/>
+
+                        <a href="{% url 'product-list-view' %}" class="btn btn-default">
+                            Cancel
+                        </a>
+
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}

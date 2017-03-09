@@ -57,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'openboxes.middleware.ThreadLocalMiddleware'
 ]
 
 # Add this to tell Django where to redirect after 
@@ -168,9 +169,17 @@ INTERNAL_IPS = ('127.0.0.1',)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+            'formatter': 'standard'
         },
     },
     'loggers': {
@@ -178,5 +187,21 @@ LOGGING = {
             'handlers': ['console'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         },
+        'openboxes': {
+            'handlers': ['console', ],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'root': {
+            'handlers': ['console', ],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        '': {
+            'handlers': ['console', ],
+            'level': 'INFO',
+            'propagate': False,
+        },
+
     },
 }

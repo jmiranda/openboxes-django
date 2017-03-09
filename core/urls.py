@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^$', views.home, name='index'),
     url(r'^products/$', ProductListView.as_view(), name='product-list-view'),
     url(r'^products/create/$', ProductCreateView.as_view(), name='product-create-view'),
+    url(r'^products/import/$', views.upload, name='product-import-view'),
     url(r'^products/(?P<product_id>[0-9]+)/$', views.product_details, name='product-details-view'),
     url(r'^products/(?P<product_id>[0-9]+)/edit/$', ProductUpdateView.as_view(), name='product-update-view'),
     url(r'^products/(?P<product_id>[0-9]+)/delete/$', ProductDeleteView.as_view(), name='product-delete-view'),
