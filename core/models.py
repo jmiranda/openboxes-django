@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -54,6 +55,8 @@ class AbstractProduct(models.Model):
     # Associations
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.SET_NULL, null=True, related_name='products')
+
+    product_search_vector = SearchVectorField(blank=True, null=True)
 
     def __str__(self):
         return self.name

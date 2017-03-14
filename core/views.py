@@ -15,6 +15,7 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import FormView, DeleteView, CreateView, UpdateView
 from django.views.generic.list import ListView
 from django.db.models import Q
+from django.contrib.postgres.search import TrigramSimilarity
 
 from .models import Product
 
@@ -76,11 +77,28 @@ class ProductSearchListView(ProductListView):
             #result = Product.objects.annotate(search = SearchVector('name', 'description', 'manufacturer__name',)).filter(search=query)
 
             # 4. Advanced fulltext search with weights, order results by rank in descending order
-            vector = SearchVector('name', weight='A') + SearchVector('category__name', weight='A') + SearchVector('manufacturer__name', weight='B') + SearchVector('description', weight='C')
-            query = SearchQuery(query)
-            rank = SearchRank(vector, query)
-            result = Product.objects.annotate(rank=rank).filter(rank__gte=0.01).order_by('-rank')
+            #vector = SearchVector('name', weight='A') + SearchVector('category__name', weight='A') + SearchVector('manufacturer__name', weight='B') + SearchVector('description', weight='C')
+            #query = SearchQuery(query)
+            #rank = SearchRank(vector, query)
+            #result = Product.objects.annotate(rank=rank).filter(rank__gte=0.1).order_by('-rank')
 
+
+            # 5a. Update the product_search_vector - needs to run whenever a product is inserted or updated
+            #Product.objects.update(product_search_vector=vector)
+
+            # 5. Store vector in product_search_vector column
+            # FIXME Rank doesn't seem to work with the search vector fields
+            #vector = SearchVector('name', weight='A') + SearchVector('description', weight='C')
+            #query = SearchQuery(query)
+            #rank = SearchRank(vector, query)
+            #result = Product.objects.annotate(rank=rank).filter(rank__gte=0.1).order_by('-rank')
+
+            result = Product.objects.filter(product_search_vector=SearchQuery(query))
+
+            # 6. Trigram similarity
+            #result = Product.objects.annotate(similarity = TrigramSimilarity('name', query)).filter(similarity__gt=0.3).order_by('-similarity')
+
+            # 7. Highlight search terms in results
             # q = 'hello world'
             # queryset = Product.objects.extra(
             #     select={
