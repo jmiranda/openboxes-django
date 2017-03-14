@@ -2,24 +2,24 @@
 
 {% block content %}
 
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="pull-right">
-            <a href="{% url 'product-list-view' %}" class="btn btn-default">Show All</a>
-            <a href="create" class="btn btn-primary">Create a New Product</a>
+<div class="container">
+    <div class="row">
+        <h1>Products <small>Showing {{ page_obj.object_list|length }} of {{ page_obj.paginator.count }} products</small></h1>
+    </div>
+    <div class="row">
+        <div class="pull-left">
+            {% include "product/pagination.html" %}
         </div>
-
-        <h1>Products <small>Showing {{ page_obj.object_list|length }} of {{ page_obj.paginator.count }} products on Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</small></h1>
-        <div>
-
+        <div class="pull-right">
+            <div class="btn-toolbar" style="margin: 21px 0px">
+                <a href="{% url 'product-list-view' %}" class="btn btn-default">Show All</a>
+                <a href="create" class="btn btn-primary">Create a New Product</a>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="container-fluid">
-    <div class="row">
-        {% include "product/pagination.html" %}
-    </div>
+<div class="container">
 
     <div class="row">
         {% for product in object_list %}
