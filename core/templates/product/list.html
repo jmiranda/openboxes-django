@@ -35,6 +35,7 @@
                         <p><label>Category:</label> {{ product.category.name }}</p>
                         <p><label>Manufacturer:</label> {{ product.manufacturer.name }}</p>
                         <p><label>Ranking:</label> {{ product.rank }}</p>
+                        <p><label>Similarity:</label> {{ product.similarity }}</p>
                         <p>
                             <a href="{% url 'product-details-view' product.id %}" class="btn btn-default">
                                 Show

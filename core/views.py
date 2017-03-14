@@ -16,6 +16,7 @@ from django.views.generic.edit import FormView, DeleteView, CreateView, UpdateVi
 from django.views.generic.list import ListView
 from django.db.models import Q
 from django.contrib.postgres.search import TrigramSimilarity
+from django.db.models import F
 
 from .models import Product
 
@@ -84,6 +85,7 @@ class ProductSearchListView(ProductListView):
 
 
             # 5a. Update the product_search_vector - needs to run whenever a product is inserted or updated
+            #vector = SearchVector('name', weight='A') + SearchVector('description', weight='C')
             #Product.objects.update(product_search_vector=vector)
 
             # 5. Store vector in product_search_vector column
@@ -93,12 +95,16 @@ class ProductSearchListView(ProductListView):
             #rank = SearchRank(vector, query)
             #result = Product.objects.annotate(rank=rank).filter(rank__gte=0.1).order_by('-rank')
 
-            result = Product.objects.filter(product_search_vector=SearchQuery(query))
+            #result = Product.objects.filter(product_search_vector=SearchQuery(query))
 
             # 6. Trigram similarity
-            #result = Product.objects.annotate(similarity = TrigramSimilarity('name', query)).filter(similarity__gt=0.3).order_by('-similarity')
+            result = Product.objects.annotate(similarity = TrigramSimilarity('name', query)).filter(similarity__gt=0.1).order_by('-similarity')
 
-            # 7. Highlight search terms in results
+            # 7. Demonstrates search rank working with search vector field (see FIXME re: #5)
+            # Oddly, this returns ALL rproducts, but ranks them accordingly - perhaps because we're calling annotate?
+            #result = Product.objects.annotate(rank=SearchRank(F('product_search_vector'), query)).order_by('-rank')
+
+            # 8. Highlight search terms in results
             # q = 'hello world'
             # queryset = Product.objects.extra(
             #     select={
