@@ -99,11 +99,11 @@ WSGI_APPLICATION = 'openboxes.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'openboxes_django',
-        'USER': 'openboxes_django',
+        'NAME': 'openboxes',
+        'USER': 'openboxes',
         'PASSWORD': 'openboxes',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5435',
     }
 }
 
